@@ -30,11 +30,13 @@
             }
             #container {
                 align-items: center;
+                cursor: pointer;
                 display: flex;
                 font-family: Helvetica, Verdana, Tahoma, sans-serif;
                 font-size: 10em;
                 justify-content: center;
                 height: 400px;
+                user-select: none;
             }
             h1.site {
                 font-size: .5em;
@@ -316,6 +318,7 @@
         };
 
         // attach events
+        container.addEventListener('click', updateCard);
         playEl.addEventListener('click', togglePlay);
         restartEl.addEventListener('click', () => start(true));
         speedEl.addEventListener('change', () => start());
