@@ -1,0 +1,288 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Flash Cards</title>
+        <style>
+            :root {
+                --color-primary: rgb(96, 96, 247);
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                background-color: #111;
+                color: #000;
+                margin: 0;
+                padding: 0;
+                text-align: center;
+            }
+            main {
+                background: #fff;
+                border: 1px solid #aaa;
+                border-radius: 20px;
+                margin: 0 auto;
+                position: relative;
+                width: 350px;
+            }
+            nav {
+                margin-bottom: 20px;
+            }
+            h1 {
+                font-family: Helvetica, Verdana, Tahoma, sans-serif;
+                font-size: 22em;
+                margin: 0;
+                padding: 0;
+            }
+
+            /** progress bar styles **/
+            progress {
+                background: #fff;
+                border: 0;
+                top: 20px;
+                color: var(--color-primary);
+                height: 5px;
+                left: 0;
+                padding: 0 10px;
+                position: absolute;
+                width: 100%;
+            }
+            progress::-webkit-progress-bar {
+                background: #fff;
+            }
+            progress::-moz-progress-bar {
+                background: var(--color-primary);
+            }
+            progress::-webkit-progress-value {
+                background: var(--color-primary);
+            }
+
+            fieldset {
+                align-items: center;
+                border: none;
+                display: flex;
+                justify-content: space-evenly;
+                margin: 0;
+                padding: 0;
+                position: relative;
+            }
+            fieldset .controls {
+                position: relative;
+                top: -15px;
+            }
+            input {
+                cursor: pointer;
+                font-size: 24px;
+                height: 80px;
+                position: relative;
+                transform: rotate(180deg);
+                width: 20px;
+                -webkit-appearance: slider-vertical;
+            }
+            /* input::before {
+                color: #000;
+                content: '⬆';
+                right: -20px;
+                top: 0px;
+                position: absolute;
+            }
+            input::after {
+                color: #000;
+                content: '⬇';
+                bottom: 0px;
+                position: absolute;
+                right: -20px;
+            } */
+            select {
+                border-radius: 10px;
+                font-size: 1em;
+                display: block;
+                margin: 1em auto;
+                padding: 5px;
+            }
+
+            /* speed icon */
+            label {
+                /* animation: move 5s; */
+                display: inline-block;
+                font-size: 4.5em;
+                position: relative;
+                top: -15px;
+                transform: scaleX(-1);
+                /* transition: all 1s ease-in-out; */
+            }
+
+            button {
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 30px;
+                padding: 0;
+            }
+            button#restart {
+                font-size: 50px;
+            }
+
+            @keyframes move {
+                from {
+                    left: 0;
+                }
+                to {
+                    left: 100%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <select id="type">
+                <option value="letters">Letters</option>
+                <option value="numbers">Numbers</option>
+            </select>
+        </nav>
+        <main>
+            <progress id="progress" value="1" max="26">0%</progress>
+            <h1 id="container">A</h1>
+
+            <fieldset>
+                <span class="controls">
+                    <button id="play">▶</button>
+                    <button id="restart">↺</button>
+                </span>
+                <span>
+                    <input type="range" min="500" max="2500" value="1500" step="500" id="speed">
+                    <label for="speed" id="label">🐺</label>
+                </span>
+            </fieldset>
+        </main>
+    </body>
+    <script>
+    (function() {
+        // elements
+        const container = document.getElementById('container');
+        const labelEl = document.getElementById('label');
+        const playEl = document.getElementById('play');
+        const progressEl = document.getElementById('progress');
+        const restartEl = document.getElementById('restart');
+        const speedEl = document.getElementById('speed');
+        const typeEl = document.getElementById('type');
+
+        const data = {
+            letters: {
+                run: () => {
+                    const alphabet = [
+                        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+                        'o','p','q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+                    ];
+                    if (progressCount === alphabet.length) {
+                        return;
+                    }
+                    progressCount++;
+                    const randomLetter = getRandomItem(alphabet);
+                    const randomCase = getRandomItem([String.prototype.toUpperCase, String.prototype.toLowerCase]);
+                    return randomCase.call(randomLetter);
+                },
+                total: 26
+            },
+            numbers: {
+                run: () => {
+                    const total = data.numbers.total;
+                    if (progressCount === total) {
+                        return;
+                    }
+                    progressCount++;
+                    return (Math.round(Math.random() * (total - 1) + 1));
+                },
+                total: 10
+            }
+        };
+
+        // vars
+        let interval;
+        let isPlaying = false;
+        let progressCount = 1;
+        let speed = 1500;
+        const doneEmojis = ['⭐️', '🌟', '🏁', '♥️', '✔️', '💯', '🚀'];
+
+        // methods
+        const changeSpeed = () => {
+            speed = Number(speedEl.value);
+            console.log('speed', speed);
+            updateLabel(speed);
+
+            if (interval) {
+                clearInterval(interval);
+            }
+            interval = setInterval(updateCard, speed);
+        };
+
+        const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+        const start = (restart = false) => {
+            if (restart) {
+                progressCount = 1;
+                progressEl.setAttribute('value', progressCount);
+            }
+            changeSpeed();
+            setPlay();
+        }
+
+        const setPlay = () => {
+            playEl.innerText = '⃠';
+            isPlaying = true;
+        };
+
+        const setPause = () => {
+            clearInterval(interval);
+            playEl.innerText = '▶';
+            isPlaying = false;
+        };
+
+        const togglePlay = () => {
+            if (!isPlaying) {
+                start();
+            } else {
+                setPause();
+            }
+        };
+    
+        const updateCard = () => {
+            const type = typeEl.value;
+            const text = data[type].run();
+
+            // all done
+            if (!text) {
+                container.innerHTML = getRandomItem(doneEmojis);
+                setPause();
+                return;
+            }
+
+            // update card
+            container.innerHTML = text;
+
+            // update progress
+            progressEl.setAttribute('max', data[type].total);
+            progressEl.setAttribute('value', progressCount);
+            const percent = Math.round((progressCount / data[type].total) * 100);
+            progressEl.innerText = `${percent}%`;
+        };
+    
+        const updateLabel = (speed) => {
+            let text;
+            switch (speed) {
+                case 500: text = '🐆'; break;
+                case 1000: text = '🐅'; break;
+                case 1500: text = '🐺'; break;
+                case 2000: text = '🐘'; break;
+                case 2500: text = '🐢'; break;
+            }
+            labelEl.innerHTML = text;
+        };
+
+        // attach events
+        playEl.addEventListener('click', togglePlay);
+        restartEl.addEventListener('click', () => start(true));
+        speedEl.addEventListener('change', () => start());
+        typeEl.addEventListener('change', () => start(true));
+    }());
+    </script>
+</html>
