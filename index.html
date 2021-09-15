@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>Flash Cards</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1">
         <style>
             :root {
                 --color-primary: rgb(96, 96, 247);
@@ -27,11 +28,16 @@
             nav {
                 margin-bottom: 20px;
             }
-            h1 {
+            #container {
+                align-items: center;
+                display: flex;
                 font-family: Helvetica, Verdana, Tahoma, sans-serif;
-                font-size: 22em;
-                margin: 0;
-                padding: 0;
+                font-size: 10em;
+                justify-content: center;
+                height: 400px;
+            }
+            h1.site {
+                font-size: .5em;
             }
 
             /** progress bar styles **/
@@ -78,20 +84,6 @@
                 width: 20px;
                 -webkit-appearance: slider-vertical;
             }
-            /* input::before {
-                color: #000;
-                content: '⬆';
-                right: -20px;
-                top: 0px;
-                position: absolute;
-            }
-            input::after {
-                color: #000;
-                content: '⬇';
-                bottom: 0px;
-                position: absolute;
-                right: -20px;
-            } */
             select {
                 border-radius: 10px;
                 font-size: 1em;
@@ -115,11 +107,19 @@
                 background: none;
                 border: none;
                 cursor: pointer;
-                font-size: 30px;
                 padding: 0;
             }
-            button#restart {
-                font-size: 50px;
+            button svg:hover {
+                fill: red;
+            }
+            button#play svg {
+                display:none;
+            }
+            button#play.play .play {
+                display:block;
+            }
+            button#play.pause .pause {
+                display:block;
             }
 
             @keyframes move {
@@ -137,16 +137,23 @@
             <select id="type">
                 <option value="letters">Letters</option>
                 <option value="numbers">Numbers</option>
+                <option value="site">Site Words</option>
             </select>
         </nav>
         <main>
-            <progress id="progress" value="1" max="26">0%</progress>
-            <h1 id="container">A</h1>
-
+            <progress id="progress" value="0" max="26">0%</progress>
+            <section id="container">
+                <h1 class="letter">A</h1>
+            </section>
             <fieldset>
                 <span class="controls">
-                    <button id="play">▶</button>
-                    <button id="restart">↺</button>
+                    <button id="play" class="play">
+                        <svg class="play" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="50px" viewBox="0 0 24 24" width="50px" fill="#000000"><g><rect fill="none" height="24" width="24"/></g><g><path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8s8,3.59,8,8 S16.41,20,12,20z M9.5,16.5l7-4.5l-7-4.5V16.5z"/></g></svg>
+                        <svg class="pause" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="50px" viewBox="0 0 24 24" width="50px" fill="#000000"><g><rect fill="none" height="24" width="24"/></g><g><g><path d="M9,16h2V8H9V16z M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8 s3.59-8,8-8s8,3.59,8,8S16.41,20,12,20z M13,16h2V8h-2V16z"/></g></g></svg>
+                    </button>
+                    <button id="restart">
+                        <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="55px" viewBox="0 0 24 24" width="55px" fill="#000000"><g><path d="M0,0h24v24H0V0z" fill="none"/></g><g><g><path d="M6,13c0-1.65,0.67-3.15,1.76-4.24L6.34,7.34C4.9,8.79,4,10.79,4,13c0,4.08,3.05,7.44,7,7.93v-2.02 C8.17,18.43,6,15.97,6,13z M20,13c0-4.42-3.58-8-8-8c-0.06,0-0.12,0.01-0.18,0.01l1.09-1.09L11.5,2.5L8,6l3.5,3.5l1.41-1.41 l-1.08-1.08C11.89,7.01,11.95,7,12,7c3.31,0,6,2.69,6,6c0,2.97-2.17,5.43-5,5.91v2.02C16.95,20.44,20,17.08,20,13z"/></g></g></svg>
+                    </button>
                 </span>
                 <span>
                     <input type="range" min="500" max="2500" value="1500" step="500" id="speed">
@@ -168,45 +175,75 @@
 
         const data = {
             letters: {
+                data: [
+                    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+                    'o','p','q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+                ],
                 run: () => {
-                    const alphabet = [
-                        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-                        'o','p','q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-                    ];
-                    if (progressCount === alphabet.length) {
+                    if (progressCount === 26) {
                         return;
                     }
                     progressCount++;
-                    const randomLetter = getRandomItem(alphabet);
+                    const randomLetter = getRandomItem(data.letters.data);
                     const randomCase = getRandomItem([String.prototype.toUpperCase, String.prototype.toLowerCase]);
                     return randomCase.call(randomLetter);
-                },
-                total: 26
+                }
             },
             numbers: {
+                data: Array(10),
                 run: () => {
-                    const total = data.numbers.total;
+                    const total = data.numbers.data.length;
                     if (progressCount === total) {
                         return;
                     }
                     progressCount++;
                     return (Math.round(Math.random() * (total - 1) + 1));
-                },
-                total: 10
+                }
+            },
+            site: {
+                data: [
+                    'a','about','all','am','an','and','are','as','ask','asks','at','at','away',
+                    'be','because','big','but','by',
+                    'can','come','could',
+                    'do','down',
+                    'eat',
+                    'find','for','from',
+                    'gets','give','go','goes','good',
+                    'had','has','have','he','help','helps','her','here','him','his','how',
+                    'i','in,','into','is','it',
+                    'lay','let\'s','like','little','live','look',
+                    'make','me','my',
+                    'no','not','now',
+                    'of','off','on','one','our','our','over',
+                    'play','put','puts',
+                    'said','saw','say','says','see','she','should','so','some','something',
+                    'take','than','that','the','them','then','there','this','to','too',
+                    'under','up','us',
+                    'very',
+                    'want','was','we','went','were','what','when','where','why','will','with','works','works','would',
+                    'you','your'
+                ],
+                run: () => {
+                    const total = data.site.data.length;
+                    if (progressCount === total) {
+                        return;
+                    }
+                    progressCount++;
+                    return getRandomItem(data.site.data);
+                }
             }
         };
 
         // vars
         let interval;
         let isPlaying = false;
-        let progressCount = 1;
+        let progressCount = 0;
         let speed = 1500;
         const doneEmojis = ['⭐️', '🌟', '🏁', '♥️', '✔️', '💯', '🚀'];
 
         // methods
         const changeSpeed = () => {
             speed = Number(speedEl.value);
-            console.log('speed', speed);
             updateLabel(speed);
 
             if (interval) {
@@ -219,7 +256,7 @@
 
         const start = (restart = false) => {
             if (restart) {
-                progressCount = 1;
+                progressCount = 0;
                 progressEl.setAttribute('value', progressCount);
             }
             changeSpeed();
@@ -227,13 +264,13 @@
         }
 
         const setPlay = () => {
-            playEl.innerText = '⃠';
+            playEl.className = 'pause';
             isPlaying = true;
         };
 
         const setPause = () => {
             clearInterval(interval);
-            playEl.innerText = '▶';
+            playEl.className = 'play';
             isPlaying = false;
         };
 
@@ -257,12 +294,12 @@
             }
 
             // update card
-            container.innerHTML = text;
+            container.innerHTML = `<h1 class="${type}">${text}</h1>`;
 
             // update progress
-            progressEl.setAttribute('max', data[type].total);
+            progressEl.setAttribute('max', data[type].data.length);
             progressEl.setAttribute('value', progressCount);
-            const percent = Math.round((progressCount / data[type].total) * 100);
+            const percent = Math.round((progressCount / data[type].data.length) * 100);
             progressEl.innerText = `${percent}%`;
         };
     
