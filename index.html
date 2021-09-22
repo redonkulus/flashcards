@@ -40,6 +40,7 @@
                 font-size: 10em;
                 justify-content: center;
                 height: 400px;
+                touch-action: manipulation;
                 user-select: none;
             }
             h1.site {
@@ -336,6 +337,23 @@
         speedEl.addEventListener('change', start);
         typeEl.addEventListener('change', restart);
         voiceEl.addEventListener('click', sayCard);
+
+        // touch handling
+        let drag = {};
+        container.addEventListener('touchstart', (e) => {
+            const { clientX } = e.changedTouches[0];
+            drag.startX = clientX;
+        }, true);
+        container.addEventListener('touchend', (e) => {
+            const { clientX } = e.changedTouches[0];
+
+            // swiped right then change card
+            if (clientX < drag.startX) {
+                updateCard();
+            }
+
+            drag = {};
+        }, true);
 
         // attach keyboard events
         document.addEventListener('keyup', (e) => {
