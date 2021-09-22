@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>Flash Cards</title>
-        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1">
+        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
         <style>
             :root {
                 --color-primary: rgb(96, 96, 247);
@@ -260,17 +260,19 @@
 
         const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+        const restart = () => {
+            updateCard();
+            progressCount = 0;
+            progressEl.setAttribute('value', progressCount);
+        };
+
         const sayCard = () => {
             const currentItemEl = document.getElementsByTagName('h1')[0];
             const utterThis = new SpeechSynthesisUtterance(currentItemEl.innerText);
             window.speechSynthesis.speak(utterThis);
         };
 
-        const start = (restart = false) => {
-            if (restart) {
-                progressCount = 0;
-                progressEl.setAttribute('value', progressCount);
-            }
+        const start = () => {
             changeSpeed();
             setPlay();
         }
@@ -330,9 +332,9 @@
         // attach events
         container.addEventListener('click', updateCard);
         playEl.addEventListener('click', togglePlay);
-        restartEl.addEventListener('click', () => start(true));
+        restartEl.addEventListener('click', restart);
         speedEl.addEventListener('change', () => start());
-        typeEl.addEventListener('change', () => start(true));
+        typeEl.addEventListener('change', restart);
         voiceEl.addEventListener('click', sayCard);
     }());
     </script>
