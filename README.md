@@ -1,3 +1,3 @@
-# flash
+# flashcards
 
-Simple educational flash card website. Supports the alpha, numbers and site words.
+Simple educational flashcard web app. Supports the alphabet, numbers and site words.
