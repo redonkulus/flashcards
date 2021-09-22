@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>Flash Cards</title>
-        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <style>
             :root {
                 --color-primary: rgb(96, 96, 247);
@@ -96,13 +96,11 @@
 
             /* speed icon */
             label {
-                /* animation: move 5s; */
                 display: inline-block;
                 font-size: 4.5em;
                 position: relative;
                 top: -15px;
                 transform: scaleX(-1);
-                /* transition: all 1s ease-in-out; */
             }
 
             button {
@@ -123,15 +121,6 @@
             button#play.pause .pause {
                 display:block;
             }
-
-            @keyframes move {
-                from {
-                    left: 0;
-                }
-                to {
-                    left: 100%;
-                }
-            }
         </style>
     </head>
     <body>
@@ -149,19 +138,19 @@
             </section>
             <fieldset>
                 <span class="controls">
-                    <button id="play" class="play">
+                    <button id="play" class="play" title="Play">
                         <svg class="play" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="50px" viewBox="0 0 24 24" width="50px" fill="#000000"><g><rect fill="none" height="24" width="24"/></g><g><path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8s8,3.59,8,8 S16.41,20,12,20z M9.5,16.5l7-4.5l-7-4.5V16.5z"/></g></svg>
                         <svg class="pause" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="50px" viewBox="0 0 24 24" width="50px" fill="#000000"><g><rect fill="none" height="24" width="24"/></g><g><g><path d="M9,16h2V8H9V16z M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8 s3.59-8,8-8s8,3.59,8,8S16.41,20,12,20z M13,16h2V8h-2V16z"/></g></g></svg>
                     </button>
-                    <button id="restart">
+                    <button id="restart" title="Restart">
                         <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="55px" viewBox="0 0 24 24" width="55px" fill="#000000"><g><path d="M0,0h24v24H0V0z" fill="none"/></g><g><g><path d="M6,13c0-1.65,0.67-3.15,1.76-4.24L6.34,7.34C4.9,8.79,4,10.79,4,13c0,4.08,3.05,7.44,7,7.93v-2.02 C8.17,18.43,6,15.97,6,13z M20,13c0-4.42-3.58-8-8-8c-0.06,0-0.12,0.01-0.18,0.01l1.09-1.09L11.5,2.5L8,6l3.5,3.5l1.41-1.41 l-1.08-1.08C11.89,7.01,11.95,7,12,7c3.31,0,6,2.69,6,6c0,2.97-2.17,5.43-5,5.91v2.02C16.95,20.44,20,17.08,20,13z"/></g></g></svg>
                     </button>
-                    <button id="voice">
+                    <button id="voice" title="Speak card">
                         <svg xmlns="http://www.w3.org/2000/svg" height="55px" viewBox="0 0 24 24" width="55px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M3 9v6h4l5 5V4L7 9H3zm7-.17v6.34L7.83 13H5v-2h2.83L10 8.83zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77z"/></svg>
                     </button>
                 </span>
                 <span>
-                    <input type="range" min="500" max="2500" value="1500" step="500" id="speed">
+                    <input type="range" min="500" max="2500" value="1500" step="500" id="speed" title="Adjust speed">
                     <label for="speed" id="label">🐺</label>
                 </span>
             </fieldset>
@@ -329,13 +318,24 @@
             labelEl.innerHTML = text;
         };
 
-        // attach events
+        // attach mouse events
         container.addEventListener('click', updateCard);
         playEl.addEventListener('click', togglePlay);
         restartEl.addEventListener('click', restart);
-        speedEl.addEventListener('change', () => start());
+        speedEl.addEventListener('change', start);
         typeEl.addEventListener('change', restart);
         voiceEl.addEventListener('click', sayCard);
+
+        // attach keyboard events
+        document.addEventListener('keyup', (e) => {
+            switch (e.keyCode) {
+                case 32: updateCard(); break; // spacebar
+                case 82: restart(); break; // r 
+                case 83: togglePlay(); break; // s
+                case 84: typeEl.focus(); break; // t
+                case 86: sayCard(); break; // v
+            }
+        });
     }());
     </script>
 </html>
