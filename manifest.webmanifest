@@ -6,7 +6,7 @@
     "background_color": "#000",
     "display": "fullscreen",
     "scope": "/",
-    "start_url": "/",
+    "start_url": "/flashcards/",
     "icons": [
         {
             "src": "/icons/icon-192x192.png",
