@@ -11,6 +11,7 @@
         <style>
             :root {
                 --color-primary: rgb(96, 96, 247);
+                --content-width: 350px;
             }
             * {
                 box-sizing: border-box;
@@ -18,8 +19,9 @@
             body {
                 background-color: #111;
                 color: #000;
+                font-family: Helvetica, Verdana, Tahoma, sans-serif;
                 margin: 0;
-                padding: 0;
+                padding: 20px;
                 text-align: center;
                 touch-action: pan-x pan-y;
             }
@@ -29,16 +31,54 @@
                 border-radius: 20px;
                 margin: 0 auto;
                 position: relative;
-                width: 350px;
+                width: var(--content-width);
             }
+
+            /** nav styles */
             nav {
-                margin-bottom: 20px;
+                display: flex;
+                justify-content: center;
+                margin: 0 auto 20px;
+                text-transform: uppercase;
+                width: var(--content-width);
             }
-            #container {
+            nav button {
+                background: #f8f9fa;
+                border: 1px solid #d8d7d7;
+                color: #000;
+                cursor: pointer;
+                display: inline-block;
+                font-size: 1rem;
+                font-weight: 400;
+                line-height: 1.42857143;
+                padding: 6px 12px;
+                text-align:center;
+                vertical-align: middle;
+            }
+            nav.letters button[data-type=letters],
+            nav.alphabet button[data-type=alphabet],
+            nav.site button[data-type=site],
+            nav button:hover {
+                background-color: #0d6efd;
+                border-color: #0d6efd;
+                color: #fff;
+            }
+            nav button:first-child {
+                border-bottom-left-radius: 4px;
+                border-right: 0;
+                border-top-left-radius: 4px;
+            }
+            nav button:last-child {
+                border-bottom-right-radius: 4px;
+                border-left: 0;
+                border-top-right-radius: 4px;
+            }
+
+            /** card container */
+            section {
                 align-items: center;
                 cursor: pointer;
                 display: flex;
-                font-family: Helvetica, Verdana, Tahoma, sans-serif;
                 font-size: 10em;
                 justify-content: center;
                 height: 400px;
@@ -71,6 +111,7 @@
                 background: var(--color-primary);
             }
 
+            /** controls */
             fieldset {
                 align-items: center;
                 border: none;
@@ -100,8 +141,6 @@
                 margin: 1em auto;
                 padding: 5px;
             }
-
-            /* speed icon */
             label {
                 display: inline-block;
                 font-size: 4.5em;
@@ -109,14 +148,13 @@
                 top: -15px;
                 transform: scaleX(-1);
             }
-
-            button {
+            fieldset button {
                 background: none;
                 border: none;
                 cursor: pointer;
                 padding: 0;
             }
-            button svg:hover {
+            fieldset button svg:hover {
                 fill: red;
             }
             button#play svg {
@@ -138,28 +176,26 @@
         </script>
     </head>
     <body>
-        <nav>
-            <select id="type">
-                <option value="letters">Letters</option>
-                <option value="numbers">Numbers</option>
-                <option value="site">Site Words</option>
-            </select>
+        <nav class="letters">
+            <button data-type="letters">Letters</button>
+            <button data-type="numbers">Numbers</button>
+            <button data-type="site">Site Words</button>
         </nav>
         <main>
             <progress id="progress" value="0" max="26">0%</progress>
-            <section id="container">
+            <section id="container" accesskey="space">
                 <h1 class="letter">A</h1>
             </section>
             <fieldset>
                 <span class="controls">
-                    <button id="play" class="play" title="Play">
+                    <button id="play" class="play" title="Play" accesskey="s">
                         <svg class="play" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="50px" viewBox="0 0 24 24" width="50px" fill="#000000"><g><rect fill="none" height="24" width="24"/></g><g><path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8s8,3.59,8,8 S16.41,20,12,20z M9.5,16.5l7-4.5l-7-4.5V16.5z"/></g></svg>
                         <svg class="pause" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="50px" viewBox="0 0 24 24" width="50px" fill="#000000"><g><rect fill="none" height="24" width="24"/></g><g><g><path d="M9,16h2V8H9V16z M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8 s3.59-8,8-8s8,3.59,8,8S16.41,20,12,20z M13,16h2V8h-2V16z"/></g></g></svg>
                     </button>
-                    <button id="restart" title="Restart">
+                    <button id="restart" title="Restart" accesskey="r">
                         <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="55px" viewBox="0 0 24 24" width="55px" fill="#000000"><g><path d="M0,0h24v24H0V0z" fill="none"/></g><g><g><path d="M6,13c0-1.65,0.67-3.15,1.76-4.24L6.34,7.34C4.9,8.79,4,10.79,4,13c0,4.08,3.05,7.44,7,7.93v-2.02 C8.17,18.43,6,15.97,6,13z M20,13c0-4.42-3.58-8-8-8c-0.06,0-0.12,0.01-0.18,0.01l1.09-1.09L11.5,2.5L8,6l3.5,3.5l1.41-1.41 l-1.08-1.08C11.89,7.01,11.95,7,12,7c3.31,0,6,2.69,6,6c0,2.97-2.17,5.43-5,5.91v2.02C16.95,20.44,20,17.08,20,13z"/></g></g></svg>
                     </button>
-                    <button id="voice" title="Speak card">
+                    <button id="voice" title="Speak card" accesskey="v">
                         <svg xmlns="http://www.w3.org/2000/svg" height="55px" viewBox="0 0 24 24" width="55px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M3 9v6h4l5 5V4L7 9H3zm7-.17v6.34L7.83 13H5v-2h2.83L10 8.83zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77z"/></svg>
                     </button>
                 </span>
@@ -173,13 +209,13 @@
     <script>
     (async function() {
         // elements
-        const container = document.getElementById('container');
+        const containerEl = document.getElementById('container');
         const labelEl = document.getElementById('label');
+        const navEl = document.getElementsByTagName('nav')[0];
         const playEl = document.getElementById('play');
         const progressEl = document.getElementById('progress');
         const restartEl = document.getElementById('restart');
         const speedEl = document.getElementById('speed');
-        const typeEl = document.getElementById('type');
         const voiceEl = document.getElementById('voice');
 
         const data = {
@@ -244,6 +280,7 @@
         };
 
         // vars
+        let currentType = 'letters';
         let interval;
         let isPlaying = false;
         let progressCount = 0;
@@ -300,23 +337,22 @@
         };
     
         const updateCard = () => {
-            const type = typeEl.value;
-            const text = data[type].run();
+            const text = data[currentType].run();
 
             // all done
             if (!text) {
-                container.innerHTML = getRandomItem(doneEmojis);
+                containerEl.innerHTML = getRandomItem(doneEmojis);
                 setPause();
                 return;
             }
 
             // update card
-            container.innerHTML = `<h1 class="${type}">${text}</h1>`;
+            containerEl.innerHTML = `<h1 class="${currentType}">${text}</h1>`;
 
             // update progress
-            progressEl.setAttribute('max', data[type].data.length);
+            progressEl.setAttribute('max', data[currentType].data.length);
             progressEl.setAttribute('value', progressCount);
-            const percent = Math.round((progressCount / data[type].data.length) * 100);
+            const percent = Math.round((progressCount / data[currentType].data.length) * 100);
             progressEl.innerText = `${percent}%`;
         };
     
@@ -333,20 +369,24 @@
         };
 
         // attach mouse events
-        container.addEventListener('click', updateCard);
+        containerEl.addEventListener('click', updateCard);
+        navEl.addEventListener('click', (e) => {
+            currentType = e.target.getAttribute('data-type');
+            navEl.className = currentType;
+            restart();
+        });
         playEl.addEventListener('click', togglePlay);
         restartEl.addEventListener('click', restart);
         speedEl.addEventListener('change', start);
-        typeEl.addEventListener('change', restart);
         voiceEl.addEventListener('click', sayCard);
 
         // touch handling
         let drag = {};
-        container.addEventListener('touchstart', (e) => {
+        containerEl.addEventListener('touchstart', (e) => {
             const { clientX } = e.changedTouches[0];
             drag.startX = clientX;
         }, true);
-        container.addEventListener('touchend', (e) => {
+        containerEl.addEventListener('touchend', (e) => {
             const { clientX } = e.changedTouches[0];
 
             // swiped right then change card
@@ -363,7 +403,6 @@
                 case 32: updateCard(); break; // spacebar
                 case 82: restart(); break; // r 
                 case 83: togglePlay(); break; // s
-                case 84: typeEl.focus(); break; // t
                 case 86: sayCard(); break; // v
             }
         });
