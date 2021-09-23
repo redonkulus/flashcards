@@ -384,6 +384,8 @@
         // touch handling
         let drag = {};
         containerEl.addEventListener('touchstart', (e) => {
+             // prevent page scroll
+            document.body.style.overflow = 'hidden';
             const { clientX } = e.changedTouches[0];
             drag.startX = clientX;
         }, true);
@@ -394,7 +396,7 @@
             if (clientX < drag.startX) {
                 updateCard();
             }
-
+            document.body.style.overflow = 'scroll';
             drag = {};
         }, true);
 
