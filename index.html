@@ -413,7 +413,6 @@
         // add service worker for the web manifest
         try {
             const reg = await navigator.serviceWorker.register('/flashcards/service-worker.js');
-            console.log('Registration successful, scope is:', reg.scope);
         } catch(e) {}
     }());
     </script>
