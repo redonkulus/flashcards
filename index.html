@@ -57,7 +57,7 @@
                 vertical-align: middle;
             }
             nav.letters button[data-type=letters],
-            nav.alphabet button[data-type=alphabet],
+            nav.numbers button[data-type=numbers],
             nav.site button[data-type=site],
             nav button:hover {
                 background-color: #0d6efd;
@@ -369,7 +369,7 @@
             labelEl.innerHTML = text;
         };
 
-        // attach mouse events
+        // attach events
         containerEl.addEventListener('click', updateCard);
         navEl.addEventListener('click', (e) => {
             currentType = e.target.getAttribute('data-type');
