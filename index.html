@@ -10,7 +10,8 @@
         <link rel="manifest" href="manifest.webmanifest">
         <style>
             :root {
-                --color-primary: rgb(96, 96, 247);
+                --border-radius: 4px;
+                --color-primary: rgb(13, 110, 253);
                 --content-width: 350px;
             }
             * {
@@ -23,6 +24,7 @@
                 margin: 0;
                 padding: 20px 0;
                 text-align: center;
+                text-rendering: optimizeLegibility;
                 touch-action: pan-x pan-y;
             }
             main {
@@ -33,14 +35,45 @@
                 position: relative;
                 width: var(--content-width);
             }
+            button {
+                background: none;
+                border: none;
+                cursor: pointer;
+                margin: 0;
+                padding: 0;
+            }
+            dt, dd {
+                display: inline;
+                line-height: 1.2em;
+                margin: 0;
+                padding: 0;
+                vertical-align: middle;
+            }
+            ul {
+                padding-left: 20px;
+            }
+            p {
+                margin-top: 0;
+            }
 
             /** nav styles */
+            .nav {
+                align-items: center;
+                display: flex;
+                margin: 0 auto 20px;
+                justify-content: space-evenly;
+                width: var(--content-width);
+            }
+            /* help button */
+            .nav > button:focus svg,
+            .nav > button:hover svg {
+                fill: var(--color-primary);
+            }
+            /* buttons */
             nav {
                 display: flex;
                 justify-content: center;
-                margin: 0 auto 20px;
                 text-transform: uppercase;
-                width: var(--content-width);
             }
             nav button {
                 background: #f8f9fa;
@@ -51,7 +84,6 @@
                 font-size: 1rem;
                 font-weight: 400;
                 line-height: 1.42857143;
-                margin: 0;
                 padding: 6px 12px;
                 text-align:center;
                 vertical-align: middle;
@@ -59,20 +91,21 @@
             nav.letters button[data-type=letters],
             nav.numbers button[data-type=numbers],
             nav.site button[data-type=site],
+            nav button:focus,
             nav button:hover {
-                background-color: #0d6efd;
-                border-color: #0d6efd;
+                background-color: var(--color-primary);
+                border-color: var(--color-primary);
                 color: #fff;
             }
             nav button:first-child {
-                border-bottom-left-radius: 4px;
+                border-bottom-left-radius: var(--border-radius);
                 border-right: 0;
-                border-top-left-radius: 4px;
+                border-top-left-radius: var(--border-radius);
             }
             nav button:last-child {
-                border-bottom-right-radius: 4px;
+                border-bottom-right-radius: var(--border-radius);
                 border-left: 0;
-                border-top-right-radius: 4px;
+                border-top-right-radius: var(--border-radius);
             }
 
             /** card container */
@@ -149,12 +182,6 @@
                 top: -15px;
                 transform: scaleX(-1);
             }
-            fieldset button {
-                background: none;
-                border: none;
-                cursor: pointer;
-                padding: 0;
-            }
             fieldset button svg:hover {
                 fill: red;
             }
@@ -167,6 +194,34 @@
             button#play.pause .pause {
                 display:block;
             }
+
+            /** help */
+            #help {
+                background: #fff;
+                border-radius: 20px;
+                bottom: -1px;
+                color: #333;
+                left: -1px;
+                line-height: 1.2em;
+                opacity: 0;
+                padding: 20px;
+                position: absolute;
+                right: -1px;
+                text-align: left;
+                top: -1px;
+                width: var(--content-width);
+            }
+            #help.show {
+                opacity: 1;
+                transition: opacity .3s;
+            }
+            .close {
+                font-size: 1em;
+                font-weight: bold;
+                position: absolute;
+                right: 1em;
+                top: 1em;
+            }
         </style>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-CY7Z0EX04Q"></script>
         <script>
@@ -177,11 +232,16 @@
         </script>
     </head>
     <body>
-        <nav class="letters">
-            <button data-type="letters">Letters</button>
-            <button data-type="numbers">Numbers</button>
-            <button data-type="site">Site Words</button>
-        </nav>
+        <div class="nav">
+            <nav class="letters">
+                <button data-type="letters">Letters</button>
+                <button data-type="numbers">Numbers</button>
+                <button data-type="site">Site Words</button>
+            </nav>
+            <button id="help-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+            </button>
+        </div>
         <main>
             <progress id="progress" value="0" max="26">0%</progress>
             <section id="container" accesskey="space">
@@ -205,12 +265,57 @@
                     <label for="speed" id="label">🐺</label>
                 </span>
             </fieldset>
+            <div id="help" aria-modal="true" role="dialog">
+                <p>Choose the flashcard type via the navigation above. Click, tap or swipe the card to view the next card.</p>
+                <h4>Controls</h4>
+                <dl></dl>
+                    <div>
+                        <dt>
+                            <svg class="play" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/></g><g><path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8s8,3.59,8,8 S16.41,20,12,20z M9.5,16.5l7-4.5l-7-4.5V16.5z"/></g></svg>
+                        </dt>
+                        <dd>Auto change the card at a given interval. You can use the slider to change the speed at which the card changes.</dd>
+                    </div>
+                    <div>
+                        <dt>
+                            <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="26px" viewBox="0 0 24 24" width="26px" fill="#000000"><g><path d="M0,0h24v24H0V0z" fill="none"/></g><g><g><path d="M6,13c0-1.65,0.67-3.15,1.76-4.24L6.34,7.34C4.9,8.79,4,10.79,4,13c0,4.08,3.05,7.44,7,7.93v-2.02 C8.17,18.43,6,15.97,6,13z M20,13c0-4.42-3.58-8-8-8c-0.06,0-0.12,0.01-0.18,0.01l1.09-1.09L11.5,2.5L8,6l3.5,3.5l1.41-1.41 l-1.08-1.08C11.89,7.01,11.95,7,12,7c3.31,0,6,2.69,6,6c0,2.97-2.17,5.43-5,5.91v2.02C16.95,20.44,20,17.08,20,13z"/></g></g></svg>
+                        </dt>
+                        <dd>Restart the flashcards from the beginning with a new random order.</dd>
+                    </div>
+                    <div>
+                        <dt>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 0 24 24" width="26px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M3 9v6h4l5 5V4L7 9H3zm7-.17v6.34L7.83 13H5v-2h2.83L10 8.83zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77z"/></svg>
+                        </dt>
+                        <dd>Says the current card out loud.</dd>
+                    </div>
+                </dl>
+                <h4>Keyboard Shortcuts</h4>
+                <p>On a desktop computer, you can use the following keys to navigate the app:</p>
+                <ul>
+                    <li>
+                        <kbd>spacebar</kbd> - Change cards
+                    </li>
+                    <li>
+                        <kbd>s</kbd> - Autoplay the cards
+                    </li>
+                    <li>
+                        <kbd>r</kbd> - Restart the flashcards
+                    </li>
+                    <li>
+                        <kbd>v</kbd> - Say the currently displayed card
+                    </li>
+                </ul>
+                <button id="help-close" class="close" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none" opacity=".87"/><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.59-13L12 10.59 8.41 7 7 8.41 10.59 12 7 15.59 8.41 17 12 13.41 15.59 17 17 15.59 13.41 12 17 8.41z"/></svg>
+                </button>
+            </div>
         </main>
     </body>
     <script>
     (async function() {
         // elements
         const containerEl = document.getElementById('container');
+        const helpBtnEl = document.getElementById('help-btn');
+        const helpCloseEl = document.getElementById('help-close');
         const labelEl = document.getElementById('label');
         const navEl = document.getElementsByTagName('nav')[0];
         const playEl = document.getElementById('play');
@@ -301,6 +406,12 @@
 
         const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+        const showHelp = () => {
+            let help = document.getElementById('help');
+            help.classList.toggle('show');
+            help.focus();
+        }
+
         const restart = () => {
             updateCard();
             progressCount = 0;
@@ -371,6 +482,11 @@
 
         // attach events
         containerEl.addEventListener('click', updateCard);
+        helpBtnEl.addEventListener('click', showHelp);
+        helpCloseEl.addEventListener('click', () => {
+            let help = document.getElementById('help');
+            help.classList.toggle('show');
+        })
         navEl.addEventListener('click', (e) => {
             currentType = e.target.getAttribute('data-type');
             navEl.className = currentType;
@@ -406,10 +522,12 @@
         // attach keyboard events
         document.addEventListener('keyup', (e) => {
             switch (e.keyCode) {
+                case 27: showHelp(); break; // close help
                 case 32: updateCard(); break; // spacebar
                 case 82: restart(); break; // r 
                 case 83: togglePlay(); break; // s
                 case 86: sayCard(); break; // v
+                case 191: (e.shiftKey && showHelp()); break; // ?
             }
         });
 
