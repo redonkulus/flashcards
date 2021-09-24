@@ -384,18 +384,21 @@
         // touch handling
         let drag = {};
         containerEl.addEventListener('touchstart', (e) => {
-             // prevent page scroll
-            document.body.style.overflow = 'hidden';
             const { clientX } = e.changedTouches[0];
             drag.startX = clientX;
         }, true);
-        containerEl.addEventListener('touchend', (e) => {
+        containerEl.addEventListener('touchmove', (e) => {
             const { clientX } = e.changedTouches[0];
 
-            // swiped right then change card
+            // swiped left then change card
             if (clientX < drag.startX) {
+                // prevent page scroll
+                document.body.style.overflow = 'hidden';
                 updateCard();
             }
+            drag = {};
+        }, true);
+        containerEl.addEventListener('touchend', (e) => {
             document.body.style.overflow = 'scroll';
             drag = {};
         }, true);
