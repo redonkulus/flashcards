@@ -222,13 +222,12 @@
                 top: 1em;
             }
         </style>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-CY7Z0EX04Q"></script>
         <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-CY7Z0EX04Q');
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'G-CY7Z0EX04Q', 'auto');
+        ga('send', 'pageview');
         </script>
+        <script async src='https://www.google-analytics.com/analytics.js'></script>
     </head>
     <body>
         <div class="nav">
@@ -313,6 +312,7 @@
     (async function() {
         // elements
         const containerEl = document.getElementById('container');
+        const helpEl = document.getElementById('help');
         const helpBtnEl = document.getElementById('help-btn');
         const helpCloseEl = document.getElementById('help-close');
         const labelEl = document.getElementById('label');
@@ -406,9 +406,8 @@
         const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
         const showHelp = () => {
-            let help = document.getElementById('help');
-            help.classList.toggle('show');
-            help.focus();
+            helpEl.classList.toggle('show');
+            helpEl.focus();
         }
 
         const restart = () => {
@@ -480,21 +479,40 @@
         };
 
         // attach events
-        containerEl.addEventListener('click', updateCard);
-        helpBtnEl.addEventListener('click', showHelp);
+        containerEl.addEventListener('click', () => {
+            updateCard();
+            ga('send', 'event', currentType, 'click');
+        });
+        helpBtnEl.addEventListener('click', () => {
+            showHelp();
+            ga('send', 'event', 'help', helpEl.classList.contains('show') ? 'show' : 'hide');
+        });
         helpCloseEl.addEventListener('click', () => {
-            let help = document.getElementById('help');
-            help.classList.toggle('show');
+            ga('send', 'event', 'help', 'close');
+            helpEl.classList.toggle('show');
         })
         navEl.addEventListener('click', (e) => {
             currentType = e.target.getAttribute('data-type');
             navEl.className = currentType;
             restart();
+            ga('send', 'event', 'navigate', currentType);
         });
-        playEl.addEventListener('click', togglePlay);
-        restartEl.addEventListener('click', restart);
-        speedEl.addEventListener('change', start);
-        voiceEl.addEventListener('click', sayCard);
+        playEl.addEventListener('click', () => {
+            ga('send', 'event', currentType, !isPlaying ? 'playing' : 'pause', String(progressCount));
+            togglePlay();
+        });
+        restartEl.addEventListener('click', () => {
+            ga('send', 'event', currentType, 'restart', String(progressCount));
+            restart();
+        });
+        speedEl.addEventListener('change', (e) => {
+            ga('send', 'event', currentType, 'speed', e.target.value);
+            start();
+        });
+        voiceEl.addEventListener('click', () => {
+            ga('send', 'event', currentType, 'say');
+            sayCard();
+        });
 
         // touch handling
         let drag = {};
@@ -510,6 +528,7 @@
                 // prevent page scroll
                 document.body.style.overflow = 'hidden';
                 updateCard();
+                ga('send', 'event', currentType, 'swipe');
             }
             drag = {};
         }, true);
@@ -520,6 +539,10 @@
 
         // attach keyboard events
         document.addEventListener('keyup', (e) => {
+            // log event if keyCode matches
+            const codes = [27, 32, 82, 83, 86, 191];
+            codes.includes(e.keyCode) && ga('send', 'event', currentType, 'keyboard', e.code);
+
             switch (e.keyCode) {
                 case 27: showHelp(); break; // close help
                 case 32: updateCard(); break; // spacebar
