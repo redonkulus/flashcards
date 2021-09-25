@@ -222,12 +222,13 @@
                 top: 1em;
             }
         </style>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-CY7Z0EX04Q"></script>
         <script>
-        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-        ga('create', 'G-CY7Z0EX04Q', 'auto');
-        ga('send', 'pageview');
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-CY7Z0EX04Q');
         </script>
-        <script async src='https://www.google-analytics.com/analytics.js'></script>
     </head>
     <body>
         <div class="nav">
@@ -512,13 +513,13 @@
             if (e.target.closest('#play')) {
                 togglePlay();
                 eventAction = isPlaying ? 'play' : 'pause';
-                eventLabel = String(progressCount);
+                eventLabel = progressCount;
             };
 
             if (e.target.closest('#restart')) {
                 restart();
                 eventAction = 'restart';
-                eventLabel = String(progressCount);
+                eventLabel = progressCount;
             }
 
             if (e.target.closest('#speed')) {
@@ -533,7 +534,10 @@
             }
 
             if (eventAction) {
-                ga('send', 'event', eventCategory, eventAction, eventLabel);
+                gtag('event', eventCategory, {
+                    action: eventAction,
+                    label: eventLabel
+                });
             }
         });
 
@@ -551,7 +555,7 @@
                 // prevent page scroll
                 document.body.style.overflow = 'hidden';
                 updateCard();
-                ga('send', 'event', currentType, 'swipe');
+                gtag('event', currentType, { action: 'swipe' });
             }
             drag = {};
         }, true);
@@ -564,7 +568,7 @@
         document.addEventListener('keyup', (e) => {
             // log event if keyCode matches
             const codes = [27, 32, 82, 83, 86, 191];
-            codes.includes(e.keyCode) && ga('send', 'event', currentType, 'keyboard', e.code);
+            codes.includes(e.keyCode) && gtag('event', currentType, { action: 'keyboard', label: e.code });
 
             switch (e.keyCode) {
                 case 27: showHelp(); break; // close help
