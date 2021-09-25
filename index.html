@@ -313,15 +313,11 @@
         // elements
         const containerEl = document.getElementById('container');
         const helpEl = document.getElementById('help');
-        const helpBtnEl = document.getElementById('help-btn');
-        const helpCloseEl = document.getElementById('help-close');
         const labelEl = document.getElementById('label');
         const navEl = document.getElementsByTagName('nav')[0];
         const playEl = document.getElementById('play');
         const progressEl = document.getElementById('progress');
-        const restartEl = document.getElementById('restart');
         const speedEl = document.getElementById('speed');
-        const voiceEl = document.getElementById('voice');
 
         const data = {
             letters: {
@@ -478,40 +474,67 @@
             labelEl.innerHTML = text;
         };
 
-        // attach events
-        containerEl.addEventListener('click', () => {
-            updateCard();
-            ga('send', 'event', currentType, 'click');
-        });
-        helpBtnEl.addEventListener('click', () => {
-            showHelp();
-            ga('send', 'event', 'help', helpEl.classList.contains('show') ? 'show' : 'hide');
-        });
-        helpCloseEl.addEventListener('click', () => {
-            ga('send', 'event', 'help', 'close');
-            helpEl.classList.toggle('show');
-        })
-        navEl.addEventListener('click', (e) => {
-            currentType = e.target.getAttribute('data-type');
-            navEl.className = currentType;
-            restart();
-            ga('send', 'event', 'navigate', currentType);
-        });
-        playEl.addEventListener('click', () => {
-            ga('send', 'event', currentType, !isPlaying ? 'playing' : 'pause', String(progressCount));
-            togglePlay();
-        });
-        restartEl.addEventListener('click', () => {
-            ga('send', 'event', currentType, 'restart', String(progressCount));
-            restart();
-        });
-        speedEl.addEventListener('change', (e) => {
-            ga('send', 'event', currentType, 'speed', e.target.value);
-            start();
-        });
-        voiceEl.addEventListener('click', () => {
-            ga('send', 'event', currentType, 'say');
-            sayCard();
+        // attach delegate listener on the document
+        document.addEventListener('click', (e) => {
+            let eventCategory = currentType;
+            let eventAction;
+            let eventLabel;
+
+            // nav
+            if (e.target.getAttribute('data-type')) {
+                currentType = e.target.getAttribute('data-type');
+                navEl.className = currentType;
+                restart();
+                eventCategory = 'navigate';
+                eventAction = currentType;
+            }
+
+            // container
+            if (e.target.closest('#container')) {
+                updateCard();
+                eventAction = 'click';
+            }
+
+            // help button
+            if (e.target.closest('#help-btn')) {
+                showHelp();
+                eventCategory = 'help';
+                eventAction = helpEl.classList.contains('show') ? 'show' : 'hide';
+            }
+
+            // close button
+            if (e.target.closest('#help-close')) {
+                helpEl.classList.toggle('show');
+                eventCategory = 'help';
+                eventAction = 'close';
+            }
+
+            if (e.target.closest('#play')) {
+                togglePlay();
+                eventAction = isPlaying ? 'play' : 'pause';
+                eventLabel = String(progressCount);
+            };
+
+            if (e.target.closest('#restart')) {
+                restart();
+                eventAction = 'restart';
+                eventLabel = String(progressCount);
+            }
+
+            if (e.target.closest('#speed')) {
+                start();
+                eventAction = 'speed';
+                eventLabel = e.target.value;
+            }
+
+            if (e.target.closest('#voice')) {
+                sayCard();
+                eventAction = 'say';
+            }
+
+            if (eventAction) {
+                ga('send', 'event', eventCategory, eventAction, eventLabel);
+            }
         });
 
         // touch handling
