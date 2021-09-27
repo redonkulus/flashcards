@@ -1,6 +1,6 @@
 # simply flashcards
 
-Simple educational flashcard web app. Supports the alphabet, numbers and site words.
+Simple educational flashcard web app. Supports the alphabet, numbers and sight words.
 
 http://simplyflashcards.org/
 
@@ -8,7 +8,7 @@ http://simplyflashcards.org/
 
 ## Features
 
-- Choose from three different flashcard types: alphabet, numbers and common site words
+- Choose from three different flashcard types: alphabet, numbers and common sight words
 - Autoplay cards with variable speed to test your skills
 - Speak the current card using your device's voice software
 - Works on latest Chrome, Firefox, Edge and Safari (mobile and desktop)
@@ -28,7 +28,7 @@ Vanilla HTML, CSS and JavaScript, using the latest web technologies. All the cod
 
 ## Background
 
-There are many free, perfectly fine flashcard sites on the web. However, many with obtrusive ads or poor mobile web support. I wanted to create a simple, easily accessible web app for not only my kids, but for anyone else. An easy to use interface, that is mobile friendly and available offline were key requirements.
+There are many free, perfectly fine flashcard sights on the web. However, many with obtrusive ads or poor mobile web support. I wanted to create a simple, easily accessible web app for not only my kids, but for anyone else. An easy to use interface, that is mobile friendly and available offline were key requirements.
 
 Feel free to open an issue if you find something wrong or contribute code if you want to add new features.
 
