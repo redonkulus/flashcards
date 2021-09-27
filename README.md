@@ -2,7 +2,7 @@
 
 Simple educational flashcard web app. Supports the alphabet, numbers and site words.
 
-https://redonkulus.github.io/flashcards/
+http://simplyflashcards.org/
 
 <img src="https://user-images.githubusercontent.com/193272/134744416-522c8a20-d621-48f9-9e68-56f1f309d08b.jpg" width="300">
 
